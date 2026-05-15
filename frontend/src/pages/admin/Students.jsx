@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import ConfirmModal from '../../components/ConfirmModal'
 import ExpandableCard from '../../components/ExpandableCard'
+import API from '../../config'
 
-const API = 'http://localhost:5000/api'
+// const API = 'http://localhost:5000/api'
 
 function Students() {
   const [students, setStudents] = useState([])

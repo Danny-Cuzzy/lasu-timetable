@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import ExpandableCard from '../../components/ExpandableCard'
+import API from '../../config'
 
-const API = 'http://localhost:5000/api'
+// const API = 'http://localhost:5000/api'
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 function ViewTimetable() {
