@@ -49,3 +49,16 @@ setInterval(async () => {
     console.error('Keep-alive failed:', e.message)
   }
 }, 4 * 60 * 1000)
+
+app.get('/test-email', async (req, res) => {
+  const { sendTimetableGeneratedEmail } = require('./services/emailService')
+  try {
+    await sendTimetableGeneratedEmail({
+      to: 'bossmand698@gmail.com',
+      name: 'Test User'
+    })
+    res.json({ message: 'Email sent successfully via Brevo API' })
+  } catch (error) {
+    res.json({ message: 'Email failed', error: error.message })
+  }
+})
