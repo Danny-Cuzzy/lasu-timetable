@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate, Outlet } from 'react-router-dom'
+import ConfirmModal from '../components/ConfirmModal'
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard' },
@@ -17,6 +18,7 @@ const navItems = [
 function AdminLayout() {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [logoutModal, setLogoutModal] = useState(false)
 
   const handleLogout = () => {
     localStorage.clear()
@@ -87,12 +89,12 @@ function AdminLayout() {
         {/* Logout */}
         <div className="px-3 py-4 border-t border-blue-900">
           <button
-            onClick={handleLogout}
+            onClick={() => setLogoutModal(true)}
             className="w-full flex items-center px-4 py-2.5 rounded text-sm
               font-medium text-red-300 hover:bg-red-900 hover:text-white
               transition-colors duration-150"
-          >
-            Logout
+            >
+              Logout
           </button>
         </div>
       </aside>
@@ -144,6 +146,18 @@ function AdminLayout() {
         </main>
 
       </div>
+      <ConfirmModal
+        isOpen={logoutModal}
+        title="Logout"
+        message="Are you sure you want to log out of the admin portal?"
+        confirmText="Logout"
+        confirmStyle="danger"
+        onConfirm={() => {
+            setLogoutModal(false)
+            handleLogout()
+        }}
+        onCancel={() => setLogoutModal(false)}
+      />
     </div>
   )
 }

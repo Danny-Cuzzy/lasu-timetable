@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import ExpandableCard from '../components/ExpandableCard'
 import API from '../config'
+import ConfirmModal from '../components/ConfirmModal'
 
 // const API = 'http://localhost:5000/api'
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -10,6 +11,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 function LecturerDashboard() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [logoutModal, setLogoutModal] = useState(false)
   const [activeDay, setActiveDay] = useState('Monday')
   const navigate = useNavigate()
 
@@ -70,9 +72,9 @@ function LecturerDashboard() {
             </div>
         </div>
         <button
-            onClick={handleLogout}
+            onClick={() => setLogoutModal(true)}
             className="text-xs text-red-500 hover:text-red-700 font-medium
-            px-3 py-1.5 border border-red-200 rounded-lg"
+                px-3 py-1.5 border border-red-200 rounded-lg"
         >
             Logout
         </button>
@@ -264,6 +266,18 @@ function LecturerDashboard() {
         )}
       </div>      
       </main>
+      <ConfirmModal
+        isOpen={logoutModal}
+        title="Logout"
+        message="Are you sure you want to log out of the lecturer portal ?"
+        confirmText="Logout"
+        confirmStyle="danger"
+        onConfirm={() => {
+            setLogoutModal(false)
+            handleLogout()
+        }}
+        onCancel={() => setLogoutModal(false)}
+      />
     </div>
   )
 }
