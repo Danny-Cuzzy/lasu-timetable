@@ -41,18 +41,20 @@ function AdminLogin() {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl p-8">
-
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center
-            mx-auto mb-4 text-lg font-bold text-white"
-            style={{ backgroundColor: '#0a1f44' }}>
-            A
-          </div>
-          <h1 className="text-xl font-bold text-gray-800">Administrator Access</h1>
-          <p className="text-gray-500 text-xs mt-1">
-            LASU Timetable Management System
-          </p>
+            <img
+                src="/lasu-logo.png"
+                alt="LASU Logo"
+                className="w-14 h-14 mx-auto mb-3 object-contain"
+            />
+            <h1 className="text-xl font-bold text-gray-800">
+                Administrator Access
+            </h1>
+            <p className="text-gray-500 text-xs mt-1">
+                LASU Timetable Management System
+            </p>
         </div>
+
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600

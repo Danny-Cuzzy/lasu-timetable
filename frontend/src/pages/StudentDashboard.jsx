@@ -53,33 +53,43 @@ function StudentDashboard() {
     <div className="min-h-screen bg-gray-100">
 
       {/* Top Navbar */}
-      <header className="bg-white border-b border-gray-200 px-4 lg:px-8 py-4
+      <header className="bg-white border-b border-gray-200 px-4 lg:px-8 py-3
         flex items-center justify-between">
         <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center
-            text-white text-sm font-bold flex-shrink-0"
-            style={{ backgroundColor: '#0a1f44' }}>
-            {/* L for lecturer, S for student */}
-            S
-            </div>
+            <img
+            src="/lasu-logo.png"
+            alt="LASU"
+            className="w-9 h-9 object-contain"
+            />
             <div>
-            <p className="text-sm font-semibold text-gray-800">
-                {data?.student?.name}
-            </p>
-            <p className="text-xs text-gray-500">
-                {data?.student?.matricNumber} · Student
-            </p>
+                <p className="text-xs font-bold text-gray-800">
+                    Lagos State University
+                </p>
+                <p className="text-xs text-gray-500">
+                    Timetable Management System
+                </p>
             </div>
         </div>
-        <button
+        <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+                <p className="text-sm font-semibold text-gray-800">
+                    {data?.student?.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                    {data?.student?.matricNumber} · Student
+                </p>
+                    {/* name and role */}
+            </div>
+            <button
             onClick={() => setLogoutModal(true)}
             className="text-xs text-red-500 hover:text-red-700 font-medium
                 px-3 py-1.5 border border-red-200 rounded-lg"
-        >
-            Logout
-        </button>
+            >
+                Logout
+            </button>
+        </div>
       </header>
-
+      
       <main className="p-8">
 
         {/* Page Header */}

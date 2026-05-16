@@ -56,22 +56,29 @@ function AdminLayout() {
         style={{ backgroundColor: '#0a1f44' }}>
 
         {/* Logo */}
-        <div className="flex-shrink-0 px-6 py-5 border-b border-blue-900
-          flex items-center justify-between">
-          <div>
-            <p className="text-white text-xs uppercase tracking-widest mb-1">
-              Lagos State University
-            </p>
-            <h1 className="text-white text-sm font-bold leading-tight">
-              Timetable Management System
-            </h1>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden text-blue-300 hover:text-white p-1"
-          >
-            ✕
-          </button>
+        <div className="flex-shrink-0 px-4 py-4 border-b border-blue-900
+        flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+                <img
+                    src="/lasu-logo.png"
+                    alt="LASU"
+                    className="w-10 h-10 object-contain flex-shrink-0"
+                />
+                <div>
+                    <p className="text-white text-xs font-bold leading-tight">
+                        Lagos State University
+                    </p>
+                    <p className="text-blue-300 text-xs leading-tight mt-0.5">
+                        Timetable System
+                    </p>
+                </div>
+            </div>
+            <button
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden text-blue-300 hover:text-white p-1 flex-shrink-0"
+            >
+                ✕
+            </button>
         </div>
 
         {/* Nav Items — this inner div scrolls if needed */}
@@ -114,41 +121,41 @@ function AdminLayout() {
 
         {/* Top Navbar — fixed at top */}
         <header className="flex-shrink-0 bg-white border-b border-gray-200
-          px-4 lg:px-8 py-4 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
-              style={{ color: '#0a1f44' }}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round"
-                  strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <div>
-              <h2 className="text-sm font-semibold text-gray-800">
-                Administrator Portal
-              </h2>
-              <p className="text-xs text-gray-500 hidden sm:block">
-                Department of Computer Science · Faculty of Computing & IT
-              </p>
+        px-4 lg:px-8 py-3 flex items-center justify-between z-10">
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={() => setSidebarOpen(true)}
+                    className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+                    style={{ color: '#0a1f44' }}
+                    >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                        strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div>
+                    <h2 className="text-sm font-semibold text-gray-800">
+                        Administrator Portal
+                    </h2>
+                    <p className="text-xs text-gray-500 hidden sm:block">
+                        Faculty of Computing & Information Technology
+                    </p>
+                </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-gray-800">Admin</p>
-              <p className="text-xs text-gray-500">admin@lasu.edu.ng</p>
+            <div className="flex items-center gap-2 sm:gap-3">
+                <div className="text-right hidden sm:block">
+                    <p className="text-sm font-medium text-gray-800">Admin</p>
+                    <p className="text-xs text-gray-500">admin@lasu.edu.ng</p>
+                </div>
+                <div className="w-9 h-9 rounded-full flex items-center
+                    justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ backgroundColor: '#0a1f44' }}>
+                    A
+                </div>
             </div>
-            <div className="w-9 h-9 rounded-full flex items-center
-              justify-center text-white text-sm font-bold flex-shrink-0"
-              style={{ backgroundColor: '#0a1f44' }}>
-              A
-            </div>
-          </div>
         </header>
-
+        
         {/* Scrollable Page Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           <Outlet />

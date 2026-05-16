@@ -100,15 +100,20 @@ function Login() {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center
-            mx-auto mb-4 text-xl font-bold text-white"
-            style={{ backgroundColor: '#0a1f44' }}>
-            LT
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800">LASU Timetable</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Lagos State University, Ojo
-          </p>
+            <img
+                src="/lasu-logo.png"
+                alt="LASU Logo"
+                className="w-16 h-16 mx-auto mb-3 object-contain"
+            />
+            <h1 className="text-xl font-bold text-gray-800">
+                Lagos State University
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">
+                Timetable Management System
+            </p>
+            <p className="text-gray-400 text-xs mt-0.5">
+                Ojo, Lagos State
+            </p>
         </div>
 
         {/* Role Selector */}

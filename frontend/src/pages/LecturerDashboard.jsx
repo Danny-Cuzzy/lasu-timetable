@@ -53,31 +53,41 @@ function LecturerDashboard() {
     <div className="min-h-screen bg-gray-100">
 
       {/* Top Navbar */}
-      <header className="bg-white border-b border-gray-200 px-4 lg:px-8 py-4
-        flex items-center justify-between">
-        <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center
-            text-white text-sm font-bold flex-shrink-0"
-            style={{ backgroundColor: '#0a1f44' }}>
-            {/* L for lecturer, S for student */}
-            L
+      <header className="bg-white border-b border-gray-200 px-4 lg:px-8 py-3
+            flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                <img
+                src="/lasu-logo.png"
+                alt="LASU"
+                className="w-9 h-9 object-contain"
+                />
+                <div>
+                    <p className="text-xs font-bold text-gray-800">
+                        Lagos State University
+                    </p>
+                    <p className="text-xs text-gray-500">
+                        Timetable Management System
+                    </p>
+                </div>
             </div>
-            <div>
-            <p className="text-sm font-semibold text-gray-800">
-                {data?.lecturer?.name}
-            </p>
-            <p className="text-xs text-gray-500">
-                {data?.lecturer?.staffId} · Lecturer
-            </p>
+            <div className="flex items-center gap-3">
+                <div className="text-right hidden sm:block">
+                    <p className="text-sm font-semibold text-gray-800">
+                        {data?.lecturer?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                        {data?.lecturer?.staffId} · Lecturer
+                    </p>
+                    {/* name and role */}
+                </div>
+                <button
+                onClick={() => setLogoutModal(true)}
+                className="text-xs text-red-500 hover:text-red-700 font-medium
+                    px-3 py-1.5 border border-red-200 rounded-lg"
+                >
+                Logout
+                </button>
             </div>
-        </div>
-        <button
-            onClick={() => setLogoutModal(true)}
-            className="text-xs text-red-500 hover:text-red-700 font-medium
-                px-3 py-1.5 border border-red-200 rounded-lg"
-        >
-            Logout
-        </button>
       </header>
 
       <main className="p-8">
