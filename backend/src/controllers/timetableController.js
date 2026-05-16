@@ -72,39 +72,6 @@ const generateTimetable = async (req, res) => {
 
     await prisma.timetable.createMany({ data: timetable })
 
-    // Send notifications
-    try {
-      const scheduledCourseIds = timetable.map(t => t.courseId)
-      const lecturersToNotify = await prisma.lecturer.findMany({
-        where: { courses: { some: { id: { in: scheduledCourseIds } } } },
-        include: { user: { select: { email: true } } }
-      })
-      const studentsToNotify = await prisma.student.findMany({
-        include: { user: { select: { email: true } } }
-      })
-
-      const emailPromises = []
-      for (const lecturer of lecturersToNotify) {
-        emailPromises.push(
-          sendTimetableGeneratedEmail({
-            to: lecturer.user.email,
-            name: `${lecturer.firstName} ${lecturer.lastName}`
-          })
-        )
-      }
-      for (const student of studentsToNotify) {
-        emailPromises.push(
-          sendTimetableGeneratedEmail({
-            to: student.user.email,
-            name: `${student.firstName} ${student.lastName}`
-          })
-        )
-      }
-      await Promise.allSettled(emailPromises)
-    } catch (emailError) {
-      console.error('Email error:', emailError.message)
-    }
-
     res.json({
       message: 'Timetable generated successfully',
       scheduled: timetable.length,
@@ -113,6 +80,41 @@ const generateTimetable = async (req, res) => {
       dayDistribution: dayLoad
     })
 
+    // Send notifications
+     setImmediate(async () => {
+      try {
+        const scheduledCourseIds = timetable.map(t => t.courseId)
+        const lecturersToNotify = await prisma.lecturer.findMany({
+          where: { courses: { some: { id: { in: scheduledCourseIds } } } },
+          include: { user: { select: { email: true } } }
+        })
+        const studentsToNotify = await prisma.student.findMany({
+          include: { user: { select: { email: true } } }
+        })
+
+        const emailPromises = []
+        for (const lecturer of lecturersToNotify) {
+          emailPromises.push(
+            sendTimetableGeneratedEmail({
+              to: lecturer.user.email,
+              name: `${lecturer.firstName} ${lecturer.lastName}`
+            })
+          )
+        }
+        for (const student of studentsToNotify) {
+          emailPromises.push(
+            sendTimetableGeneratedEmail({
+              to: student.user.email,
+              name: `${student.firstName} ${student.lastName}`
+            })
+          )
+        }
+        await Promise.allSettled(emailPromises)
+        console.log(`✅ Sent ${emailPromises.length} notification emails`)
+      } catch (emailError) {
+        console.error('Background email error:', emailError.message)
+      }
+    })
   } catch (error) {
     res.status(500).json({ message: 'Generation failed', error: error.message })
   }
