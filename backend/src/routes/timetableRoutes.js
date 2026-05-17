@@ -6,7 +6,9 @@ const {
   getTimetable,
   updateTimetableEntry,
   getLecturerTimetable,
-  getStudentTimetable
+  getStudentTimetable,
+  getStudentCourses,
+  getLecturerCourses
 } = require('../controllers/timetableController')
 const { protect, restrictTo } = require('../middleware/authMiddleware')
 
@@ -19,6 +21,9 @@ router.post('/generate', restrictTo('ADMIN'), generateTimetable)
 router.get('/', getTimetable)
 router.get('/lecturer', getLecturerTimetable)
 router.get('/student', getStudentTimetable)
+
+router.get('/student/courses', getStudentCourses)
+router.get('/lecturer/courses', getLecturerCourses)
 
 // Update entry — admin only
 router.patch('/:id', restrictTo('ADMIN'), updateTimetableEntry)

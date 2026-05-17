@@ -352,11 +352,112 @@ const getStudentTimetable = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message })
   }
 }
+const getStudentCourses = async (req, res) => {
+  try {
+    const userId = req.user.id
+    const student = await prisma.student.findUnique({
+      where: { userId },
+      include: { department: true }
+    })
 
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' })
+    }
+
+    const courses = await prisma.course.findMany({
+      where: {
+        departmentId: student.departmentId,
+        level: student.level
+      },
+      include: {
+        lecturer: true,
+        department: true
+      },
+      orderBy: { code: 'asc' }
+    })
+
+    res.json({
+      student: {
+        name: `${student.firstName} ${student.lastName}`,
+        matricNumber: student.matricNumber,
+        level: student.level,
+        department: student.department.name
+      },
+      courses: courses.map(c => ({
+        id: c.id,
+        code: c.code,
+        title: c.title,
+        unitLoad: c.unitLoad,
+        lecturer: `${c.lecturer.firstName} ${c.lecturer.lastName}`,
+        department: c.department.name
+      }))
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
+
+const getLecturerCourses = async (req, res) => {
+  try {
+    const userId = req.user.id
+    const lecturer = await prisma.lecturer.findUnique({
+      where: { userId }
+    })
+
+    if (!lecturer) {
+      return res.status(404).json({ message: 'Lecturer not found' })
+    }
+
+    const courses = await prisma.course.findMany({
+      where: { lecturerId: lecturer.id },
+      include: { department: true },
+      orderBy: { code: 'asc' }
+    })
+
+    // Get timetable entries for this lecturer to calculate office hours
+    const timetableEntries = await prisma.timetable.findMany({
+      where: { lecturerId: lecturer.id },
+      include: { timeslot: true }
+    })
+
+    // Find all timeslots
+    const allTimeslots = await prisma.timeslot.findMany({
+      orderBy: [{ day: 'asc' }, { startTime: 'asc' }]
+    })
+
+    // Office hours = timeslots where lecturer has NO class
+    const busySlotIds = new Set(
+      timetableEntries.map(e => e.timeslotId)
+    )
+    const officeHours = allTimeslots.filter(
+      ts => !busySlotIds.has(ts.id)
+    )
+
+    res.json({
+      lecturer: {
+        name: `${lecturer.firstName} ${lecturer.lastName}`,
+        staffId: lecturer.staffId
+      },
+      courses: courses.map(c => ({
+        id: c.id,
+        code: c.code,
+        title: c.title,
+        unitLoad: c.unitLoad,
+        level: c.level,
+        department: c.department.name
+      })),
+      officeHours
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
 module.exports = { 
     generateTimetable, 
     getTimetable, 
     updateTimetableEntry,
     getLecturerTimetable,
-    getStudentTimetable
+    getStudentTimetable,
+    getStudentCourses,
+    getLecturerCourses
 }
