@@ -91,6 +91,30 @@ function ViewTimetable() {
 
   return (
     <div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+            .no-print { display: none !important; }
+            .print-header { display: block !important; }
+            .hidden.print-only { display: block !important; }
+            body { background: white; }
+        }
+        .print-header { display: none; }
+      ` }} />
+
+        {/* Shows only when printing */}
+        <div className="print-header mb-6 text-center border-b pb-4">
+            <h1 className="text-xl font-bold">Lagos State University</h1>
+            <p className="text-sm text-gray-500">
+                Timetable Management System — Generated Schedule
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+                {new Date().toLocaleDateString('en-GB', {
+                weekday: 'long', year: 'numeric',
+                month: 'long', day: 'numeric'
+                })}
+            </p>
+        </div>
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -103,7 +127,7 @@ function ViewTimetable() {
 
       {/* Message */}
       {message && (
-        <div className={`mb-4 px-4 py-3 rounded text-sm border ${
+        <div className={`mb-4 px-4 py-3 rounded text-sm border no-print ${
           message.includes('failed') || message.includes('already')
             ? 'bg-red-50 border-red-200 text-red-700'
             : 'bg-blue-50 border-blue-200 text-blue-700'
@@ -114,7 +138,7 @@ function ViewTimetable() {
 
       {/* Day Tabs */}
       {/* <div className="flex gap-2 mb-6 flex-wrap"> */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-print">
         {DAYS.map(day => (
           <button
             key={day}
@@ -136,6 +160,56 @@ function ViewTimetable() {
         ))}
       </div>
 
+      {/* Print: show all days */}
+      <div className="hidden print-only">
+        {DAYS.map(day => {
+            const dayEnt = entries.filter(e => e.timeslot.day === day)
+            if (dayEnt.length === 0) return null
+            return (
+            <div key={day} className="mb-6">
+                <h3 className="font-bold text-gray-800 mb-2 border-b pb-1 text-sm">
+                    {day}
+                </h3>
+                <table className="w-full text-sm border-collapse">
+                    <thead>
+                        <tr className="bg-gray-100">
+                        <th className="text-left p-2 border text-xs">Time</th>
+                        <th className="text-left p-2 border text-xs">Course</th>
+                        <th className="text-left p-2 border text-xs">Department</th>
+                        <th className="text-left p-2 border text-xs">Lecturer</th>
+                        <th className="text-left p-2 border text-xs">Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {dayEnt.map(entry => (
+                        <tr key={entry.id}>
+                            <td className="p-2 border text-xs">
+                                {entry.timeslot.startTime}–{entry.timeslot.endTime}
+                            </td>
+                            <td className="p-2 border text-xs">
+                                <span className="font-mono font-bold mr-1">
+                                    {entry.course.code}
+                                </span>
+                                {entry.course.title}
+                            </td>
+                            <td className="p-2 border text-xs">
+                                {entry.course.department.name}
+                            </td>
+                            <td className="p-2 border text-xs">
+                                {entry.lecturer.firstName} {entry.lecturer.lastName}
+                            </td>
+                            <td className="p-2 border text-xs">
+                                {entry.room.name}
+                            </td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            )
+        })}
+      </div>
+      
       {/* ── DESKTOP TABLE ── */}
       <div className="hidden lg:block bg-white border border-gray-200
         rounded-lg overflow-hidden">

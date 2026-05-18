@@ -78,7 +78,7 @@ function LecturerDashboard() {
       <div className="grid grid-cols-3 gap-4 mb-6 no-print">
         {[
           { label: 'Total Classes', value: entries.length, sub: 'this semester' },
-          { label: 'Courses Teaching', value: courseList.length, sub: 'assigned' },
+          { label: 'Courses', value: courseList.length, sub: 'assigned' },
           { label: 'Free Periods', value: officeHours.length, sub: 'available' },
         ].map(card => (
           <div key={card.label} className="bg-white border border-gray-200
@@ -94,7 +94,7 @@ function LecturerDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-0 border-b border-gray-200 mb-6 no-print">
+      <div className="hidden lg:flex gap-0 border-b border-gray-200 mb-6 no-print">
         {[
           { key: 'timetable', label: 'My Timetable' },
           { key: 'courses', label: 'My Courses' },

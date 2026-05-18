@@ -93,7 +93,7 @@ function StudentDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-0 border-b border-gray-200 mb-6 no-print">
+      <div className="hidden lg:flex gap-0 border-b border-gray-200 mb-6 no-print">
         {[
           { key: 'timetable', label: 'My Timetable' },
           { key: 'courses', label: 'My Courses' },

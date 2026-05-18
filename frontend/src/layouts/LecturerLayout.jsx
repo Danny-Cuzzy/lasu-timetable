@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 
-function LecturerLayout({ lecturer }) {
+function LecturerLayout({ lecturer, activeTab, setActiveTab, children }) {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [logoutModal, setLogoutModal] = useState(false)
-  const [activeTab, setActiveTab] = useState('timetable')
+//   const [activeTab, setActiveTab] = useState('timetable')
 
   const handleLogout = () => {
     localStorage.clear()
@@ -35,8 +35,7 @@ function LecturerLayout({ lecturer }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`
-        fixed top-0 left-0 h-full w-64 z-30 flex flex-col
+      <aside className={`no-print fixed top-0 left-0 h-full w-64 z-30 flex flex-col
         transform transition-transform duration-200 ease-in-out
         lg:relative lg:translate-x-0 lg:flex-shrink-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -67,46 +66,30 @@ function LecturerLayout({ lecturer }) {
           </button>
         </div>
 
-        {/* Lecturer Info */}
-        <div className="flex-shrink-0 px-4 py-4 border-b border-blue-900">
-          <div className="w-12 h-12 rounded-full flex items-center
-            justify-center text-white text-lg font-bold mx-auto mb-2"
-            style={{ backgroundColor: '#1e3a6e' }}>
-            L
-          </div>
-          <p className="text-white text-sm font-semibold text-center
-            truncate">
-            {lecturer?.name || 'Lecturer'}
-          </p>
-          <p className="text-blue-300 text-xs text-center mt-0.5">
-            {lecturer?.staffId || ''}
-          </p>
-        </div>
-
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {[
-            { key: 'timetable', label: 'My Timetable' },
-            { key: 'courses', label: 'My Courses' },
-            { key: 'office-hours', label: 'Office Hours' },
-          ].map(item => (
-            <button
-              key={item.key}
-              onClick={() => {
-                setActiveTab(item.key)
-                setSidebarOpen(false)
-              }}
-              className={`w-full flex items-center px-4 py-2.5 rounded
-                text-sm font-medium transition-colors duration-150
-                text-left ${
-                activeTab === item.key
-                  ? 'bg-blue-600 text-white'
-                  : 'text-blue-200 hover:bg-blue-900 hover:text-white'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+            {[
+                { key: 'timetable', label: 'My Timetable' },
+                { key: 'courses', label: 'My Courses' },
+                { key: 'office-hours', label: 'Office Hours' },
+                ].map(item => (
+                <button
+                    key={item.key}
+                    onClick={() => {
+                        setActiveTab(item.key)
+                        setSidebarOpen(false)
+                    }}
+                    className={`w-full flex items-center px-4 py-2.5 rounded
+                        text-sm font-medium transition-colors duration-150
+                        text-left ${
+                        activeTab === item.key
+                        ? 'bg-blue-600 text-white'
+                        : 'text-blue-200 hover:bg-blue-900 hover:text-white'
+                    }`}
+                >
+                    {item.label}
+                </button>
+            ))}
         </nav>
 
         {/* Bottom Actions */}
@@ -144,8 +127,7 @@ function LecturerLayout({ lecturer }) {
 
         {/* Top Navbar */}
         <header className="flex-shrink-0 bg-white border-b border-gray-200
-          px-4 lg:px-8 py-4 flex items-center justify-between z-10
-          no-print">
+          px-4 lg:px-8 py-4 flex items-center justify-between z-10 no-print">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -201,7 +183,7 @@ function LecturerLayout({ lecturer }) {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-          <Outlet context={{ activeTab, setActiveTab }} />
+            {children}
         </main>
       </div>
     </div>

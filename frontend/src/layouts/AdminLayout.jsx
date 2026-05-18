@@ -47,8 +47,7 @@ function AdminLayout() {
       )}
 
       {/* ── SIDEBAR — fixed, never scrolls ── */}
-      <aside className={`
-        fixed top-0 left-0 h-full w-64 z-30 flex flex-col
+      <aside className={` no-print fixed top-0 left-0 h-full w-64 z-30 flex flex-col 
         transform transition-transform duration-200 ease-in-out
         lg:relative lg:translate-x-0 lg:flex-shrink-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -82,7 +81,7 @@ function AdminLayout() {
         </div>
 
         {/* Nav Items — this inner div scrolls if needed */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <nav className="flex-1 overflow-y-hidden py-4 px-3 space-y-1">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
@@ -138,7 +137,7 @@ function AdminLayout() {
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
         {/* Top Navbar — fixed at top */}
-        <header className="flex-shrink-0 bg-white border-b border-gray-200
+        <header className="no-print flex-shrink-0 bg-white border-b border-gray-200
         px-4 lg:px-8 py-3 flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
                 <button

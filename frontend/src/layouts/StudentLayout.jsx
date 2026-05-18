@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ConfirmModal from '../components/ConfirmModal'
 
-function StudentLayout({ student }) {
+function StudentLayout({ student, activeTab, setActiveTab, children }) {
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [logoutModal, setLogoutModal] = useState(false)
-  const [activeTab, setActiveTab] = useState('timetable')
+//   const [activeTab, setActiveTab] = useState('timetable')
 
   const handleLogout = () => {
     localStorage.clear()
@@ -35,7 +35,7 @@ function StudentLayout({ student }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`
+      <aside className={` no-print
         fixed top-0 left-0 h-full w-64 z-30 flex flex-col
         transform transition-transform duration-200 ease-in-out
         lg:relative lg:translate-x-0 lg:flex-shrink-0
@@ -67,50 +67,30 @@ function StudentLayout({ student }) {
           </button>
         </div>
 
-        {/* Student Info */}
-        <div className="flex-shrink-0 px-4 py-4 border-b border-blue-900">
-          <div className="w-12 h-12 rounded-full flex items-center
-            justify-center text-white text-lg font-bold mx-auto mb-2"
-            style={{ backgroundColor: '#1e3a6e' }}>
-            S
-          </div>
-          <p className="text-white text-sm font-semibold text-center
-            truncate">
-            {student?.name || 'Student'}
-          </p>
-          <p className="text-blue-300 text-xs text-center mt-0.5">
-            {student?.matricNumber || ''}
-          </p>
-          <p className="text-blue-400 text-xs text-center mt-0.5">
-            {student?.level}L · {student?.department}
-          </p>
-        </div>
-
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {[
-            { key: 'timetable', label: 'My Timetable' },
-            { key: 'courses', label: 'My Courses' },
-          ].map(item => (
-            <button
-              key={item.key}
-              onClick={() => {
-                setActiveTab(item.key)
-                setSidebarOpen(false)
-              }}
-              className={`w-full flex items-center px-4 py-2.5 rounded
-                text-sm font-medium transition-colors duration-150
-                text-left ${
-                activeTab === item.key
-                  ? 'bg-blue-600 text-white'
-                  : 'text-blue-200 hover:bg-blue-900 hover:text-white'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+            {[
+                { key: 'timetable', label: 'My Timetable' },
+                { key: 'courses', label: 'My Courses' },
+                ].map(item => (
+                <button
+                    key={item.key}
+                    onClick={() => {
+                        setActiveTab(item.key)
+                        setSidebarOpen(false)
+                    }}
+                    className={`w-full flex items-center px-4 py-2.5 rounded
+                        text-sm font-medium transition-colors duration-150
+                        text-left ${
+                        activeTab === item.key
+                        ? 'bg-blue-600 text-white'
+                        : 'text-blue-200 hover:bg-blue-900 hover:text-white'
+                    }`}
+                >
+                    {item.label}
+                </button>
+            ))}
         </nav>
-
         {/* Bottom Actions */}
         <div className="flex-shrink-0 px-3 py-4 border-t border-blue-900
           space-y-2">
@@ -207,7 +187,7 @@ function StudentLayout({ student }) {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-          <Outlet context={{ activeTab, setActiveTab }} />
+            {children}
         </main>
       </div>
     </div>
