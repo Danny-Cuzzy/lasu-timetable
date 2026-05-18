@@ -160,7 +160,11 @@ function ViewTimetable() {
         ))}
       </div>
 
-      {/* Print: show all days */}
+      
+      {/* ── DESKTOP TABLE ── */}
+      <div className="hidden lg:block bg-white border border-gray-200
+        rounded-lg overflow-hidden">
+              {/* Print: show all days */}
       <div className="hidden print-only">
         {DAYS.map(day => {
             const dayEnt = entries.filter(e => e.timeslot.day === day)
@@ -209,10 +213,7 @@ function ViewTimetable() {
             )
         })}
       </div>
-      
-      {/* ── DESKTOP TABLE ── */}
-      <div className="hidden lg:block bg-white border border-gray-200
-        rounded-lg overflow-hidden">
+
         <table className="w-full text-sm">
           <thead style={{ backgroundColor: '#0a1f44' }}>
             <tr>
