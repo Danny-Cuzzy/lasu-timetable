@@ -73,7 +73,7 @@ const login = async (req, res) => {
 
 
 const resetPassword = async (req, res) => {
-  const { identifier, role } = req.body
+  const { identifier, role, newPassword } = req.body
 
   try {
     if (role === 'STUDENT') {
@@ -83,11 +83,17 @@ const resetPassword = async (req, res) => {
       })
 
       if (!student) {
-        return res.status(404).json({ message: 'No student found with that matric number' })
+        return res.status(404).json({
+          message: 'No student found with that matric number'
+        })
       }
 
-      const defaultPassword = `LASU${student.matricNumber}${student.lastName.toUpperCase()}`
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10)
+      // If newPassword provided, use it. Otherwise reset to default.
+      const passwordToSet = newPassword
+        ? newPassword
+        : `LASU${student.matricNumber}${student.lastName.toUpperCase()}`
+
+      const hashedPassword = await bcrypt.hash(passwordToSet, 10)
 
       await prisma.user.update({
         where: { id: student.userId },
@@ -96,7 +102,7 @@ const resetPassword = async (req, res) => {
 
       return res.json({
         message: 'Password reset successfully',
-        defaultPassword
+        defaultPassword: newPassword ? null : passwordToSet
       })
     }
 
@@ -107,11 +113,13 @@ const resetPassword = async (req, res) => {
       })
 
       if (!lecturer) {
-        return res.status(404).json({ message: 'No lecturer found with that Staff ID' })
+        return res.status(404).json({
+          message: 'No lecturer found with that Staff ID'
+        })
       }
 
-      const defaultPassword = 'lecturer123'
-      const hashedPassword = await bcrypt.hash(defaultPassword, 10)
+      const passwordToSet = newPassword || 'lecturer123'
+      const hashedPassword = await bcrypt.hash(passwordToSet, 10)
 
       await prisma.user.update({
         where: { id: lecturer.userId },
@@ -120,7 +128,7 @@ const resetPassword = async (req, res) => {
 
       return res.json({
         message: 'Password reset successfully',
-        defaultPassword
+        defaultPassword: newPassword ? null : passwordToSet
       })
     }
 
@@ -131,4 +139,50 @@ const resetPassword = async (req, res) => {
   }
 }
 
-module.exports = { register, login, resetPassword };
+const signup = async (req, res) => {
+  const { matricNumber, email, password } = req.body
+
+  try {
+    // Find student by matric number
+    const student = await prisma.student.findUnique({
+      where: { matricNumber },
+      include: { user: true }
+    })
+
+    if (!student) {
+      return res.status(400).json({
+        message: 'Matric number not found. Contact your administrator.'
+      })
+    }
+
+    // Check email matches what admin stored
+    if (student.user.email.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({
+        message: 'Email address does not match our records for this matric number.'
+      })
+    }
+
+    // Check if student has already signed up
+    // We detect this by checking if password is still the default pattern
+    // Actually we just allow password update — student can sign up again to reset
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    await prisma.user.update({
+      where: { id: student.userId },
+      data: { password: hashedPassword }
+    })
+
+    const token = generateToken(student.user)
+    res.json({
+      message: 'Sign up successful',
+      token,
+      role: student.user.role,
+      userId: student.user.id
+    })
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
+
+module.exports = { register, login, resetPassword, signup }

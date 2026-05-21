@@ -14,6 +14,7 @@ function Login() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
@@ -49,18 +50,18 @@ function Login() {
     setSuccess('')
 
     try {
-      const res = await axios.post(`${API}/auth/reset-password`, {
+        const res = await axios.post(`${API}/auth/reset-password`, {
         identifier: resetIdentifier,
-        role
-      })
-      setSuccess(
-        `Password reset successfully. Your new password is: ${res.data.defaultPassword}`
-      )
-      setResetIdentifier('')
+        role,
+        newPassword
+        })
+        setSuccess('Password reset successfully. You can now log in with your new password.')
+        setResetIdentifier('')
+        setNewPassword('')
     } catch (err) {
-      setError(err.response?.data?.message || 'Reset failed. Try again.')
+        setError(err.response?.data?.message || 'Reset failed. Try again.')
     } finally {
-      setLoading(false)
+        setLoading(false)
     }
   }
 
@@ -236,53 +237,72 @@ function Login() {
 
         {/* RESET PASSWORD FORM */}
         {mode === 'reset' && (
-          <form onSubmit={handleResetPassword} className="space-y-5">
+        <form onSubmit={handleResetPassword} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
                 {getResetIdentifierLabel()}
-              </label>
-              <input
+            </label>
+            <input
                 type="text"
                 value={resetIdentifier}
                 onChange={e => setResetIdentifier(e.target.value)}
                 required
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5
-                  text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                  focus:border-transparent"
-              />
-              {getResetIdentifierHint() && (
+                text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                focus:border-transparent"
+            />
+            {getResetIdentifierHint() && (
                 <p className="text-xs text-gray-400 mt-1">
-                  {getResetIdentifierHint()}
+                {getResetIdentifierHint()}
                 </p>
-              )}
+            )}
+            </div>
+
+            <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+                New Password
+            </label>
+            <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                focus:border-transparent"
+            />
+            <p className="text-xs text-gray-400 mt-1">
+                Choose any password you would like to use
+            </p>
             </div>
 
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full text-white font-semibold py-2.5 rounded-lg
-                text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: '#0a1f44' }}
+            type="submit"
+            disabled={loading}
+            className="w-full text-white font-semibold py-2.5 rounded-lg
+                text-sm transition disabled:opacity-50"
+            style={{ backgroundColor: '#0a1f44' }}
             >
-              {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? 'Resetting...' : 'Reset Password'}
             </button>
 
             <p className="text-center text-xs text-gray-500">
-              Remembered your password?{' '}
-              <button
+            Remembered your password?{' '}
+            <button
                 type="button"
                 onClick={() => {
-                  setMode('login')
-                  setError('')
-                  setSuccess('')
-                  setResetIdentifier('')
+                setMode('login')
+                setError('')
+                setSuccess('')
+                setResetIdentifier('')
+                setNewPassword('')
                 }}
                 className="text-blue-600 hover:underline font-medium"
-              >
+            >
                 Back to login
-              </button>
+            </button>
             </p>
-          </form>
+        </form>
         )}
 
         {/* Footer */}
