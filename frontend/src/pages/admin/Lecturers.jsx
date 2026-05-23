@@ -16,6 +16,7 @@ function Lecturers() {
   const [selected, setSelected] = useState([])
   const [deleting, setDeleting] = useState(false)
   const [filterDept, setFilterDept] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const [modal, setModal] = useState({
     isOpen: false, title: '', message: '',
@@ -107,9 +108,14 @@ function Lecturers() {
       ? [] : filteredLecturers.map(l => l.id)
   )
 
-  const filteredLecturers = lecturers.filter(l =>
-    filterDept ? l.staffId.includes(filterDept) : true
-  )
+  const filteredLecturers = lecturers.filter(l => {
+    const deptMatch = filterDept ? l.staffId.includes(filterDept) : true
+    const searchMatch = searchQuery
+        ? l.staffId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        l.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+    return deptMatch && searchMatch
+  })
 
   const deptCodes = [...new Set(
     lecturers.map(l => l.staffId.split('/')[1])
@@ -154,6 +160,27 @@ function Lecturers() {
           {message}
         </div>
       )}
+
+      <div className="relative flex-1 max-w-xs">
+        <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search by name or staff ID..."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2
+            text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+            bg-white"
+        />
+        {searchQuery && (
+            <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2
+                    text-gray-400 hover:text-gray-600 text-xs"
+            >
+                ✕
+            </button>
+        )}
+      </div>
 
       {/* Filter */}
       <div className="flex gap-3 mb-4 flex-wrap items-center">

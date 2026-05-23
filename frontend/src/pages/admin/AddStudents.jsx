@@ -15,6 +15,11 @@ function AddStudents() {
     firstName: '', lastName: '', matricNumber: '',
     level: '100', departmentId: '', email: ''
   })
+  // Add this helper function inside the AddStudents component
+  const generateEmail = (firstName, lastName, matricNumber) => {
+    if (!firstName || !lastName || !matricNumber) return ''
+    return `${firstName.toLowerCase()}.${lastName.toLowerCase()}${matricNumber}@st.lasu.edu.ng`
+  }
 
   // Bulk add — CSV style text input
   const [bulkText, setBulkText] = useState('')
@@ -56,12 +61,11 @@ function AddStudents() {
       const students = lines.map(line => {
         const parts = line.trim().split(/\s+/)
         return {
-          firstName: parts[0] || '',
-          lastName: parts[1] || '',
-          matricNumber: parts[2] || '',
-          email: parts[3] || `daniel.arinze220591085+${parts[2]}@st.lasu.edu.ng`,
-          level: bulkLevel,
-          departmentId: bulkDeptId
+            firstName: parts[0] || '',
+            lastName: parts[1] || '',
+            matricNumber: parts[2] || '',
+            level: bulkLevel,
+            departmentId: bulkDeptId
         }
       }).filter(s => s.firstName && s.lastName && s.matricNumber)
 
@@ -138,7 +142,14 @@ function AddStudents() {
                 <input
                   type="text"
                   value={form.firstName}
-                  onChange={e => setForm({ ...form, firstName: e.target.value })}
+                  onChange={e => {
+                    const val = e.target.value
+                    setForm(prev => ({
+                        ...prev,
+                        firstName: val,
+                        email: generateEmail(val, prev.lastName, prev.matricNumber)
+                    }))
+                  }}
                   required
                   className="w-full border border-gray-300 rounded-lg px-3 py-2
                     text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -151,7 +162,14 @@ function AddStudents() {
                 <input
                   type="text"
                   value={form.lastName}
-                  onChange={e => setForm({ ...form, lastName: e.target.value })}
+                  onChange={e => {
+                    const val = e.target.value
+                    setForm(prev => ({
+                        ...prev,
+                        lastName: val,
+                        email: generateEmail(prev.firstName, val, prev.matricNumber)
+                    }))
+                  }}
                   required
                   className="w-full border border-gray-300 rounded-lg px-3 py-2
                     text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -166,7 +184,14 @@ function AddStudents() {
               <input
                 type="text"
                 value={form.matricNumber}
-                onChange={e => setForm({ ...form, matricNumber: e.target.value })}
+                onChange={e => {
+                    const val = e.target.value
+                    setForm(prev => ({
+                        ...prev,
+                        matricNumber: val,
+                        email: generateEmail(prev.firstName, prev.lastName, val)
+                    }))
+                }}
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2
                   text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -175,18 +200,17 @@ function AddStudents() {
 
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
+                    School Email Address
                 </label>
                 <input
                     type="email"
                     value={form.email}
                     onChange={e => setForm({ ...form, email: e.target.value })}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-3 py-2
                     text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                    Format: FirstName LastName MatricNumber Email (email optional)
+                    Auto-generated from name and matric number. Edit only if different.
                 </p>
             </div>
 

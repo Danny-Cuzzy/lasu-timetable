@@ -18,6 +18,7 @@ function Students() {
   const [message, setMessage] = useState('')
   const [selected, setSelected] = useState([])
   const [deleting, setDeleting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Modal state
   const [modal, setModal] = useState({
@@ -65,7 +66,11 @@ function Students() {
     const facMatch = activeFaculty ? s.faculty === activeFaculty : true
     const deptMatch = activeDept ? s.department === activeDept : true
     const levelMatch = filterLevel ? s.level.toString() === filterLevel : true
-    return facMatch && deptMatch && levelMatch
+    const searchMatch = searchQuery
+        ? s.matricNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+    return facMatch && deptMatch && levelMatch && searchMatch
   })
 
   const handleFacultyClick = (faculty) => {
@@ -240,6 +245,31 @@ function Students() {
             {dept}
           </button>
         ))}
+      </div>
+
+
+      {/* Search Bar */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="relative flex-1 max-w-xs">
+            <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search by name or matric number..."
+            className="w-full border border-gray-300 rounded-lg px-3 py-2
+                text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                bg-white pr-8"
+            />
+            {searchQuery && (
+            <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2
+                text-gray-400 hover:text-gray-600 text-xs"
+            >
+                ✕
+            </button>
+            )}
+        </div>
       </div>
 
       {/* Level Filter */}

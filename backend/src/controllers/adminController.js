@@ -229,14 +229,18 @@ const deleteStudent = async (req, res) => {
     })
     if (!student) return res.status(404).json({ message: 'Student not found' })
 
-    await prisma.student.delete({ where: { id: parseInt(id) } })
-    await prisma.user.delete({ where: { id: student.userId } })
+    // Use transaction to delete both atomically
+    await prisma.$transaction([
+      prisma.student.delete({ where: { id: parseInt(id) } }),
+      prisma.user.delete({ where: { id: student.userId } })
+    ])
 
     res.json({ message: 'Student deleted successfully' })
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message })
   }
 }
+
 
 // Bulk delete students
 const bulkDeleteStudents = async (req, res) => {
@@ -247,8 +251,10 @@ const bulkDeleteStudents = async (req, res) => {
     })
     const userIds = students.map(s => s.userId)
 
-    await prisma.student.deleteMany({ where: { id: { in: ids.map(Number) } } })
-    await prisma.user.deleteMany({ where: { id: { in: userIds } } })
+    await prisma.$transaction([
+      prisma.student.deleteMany({ where: { id: { in: ids.map(Number) } } }),
+      prisma.user.deleteMany({ where: { id: { in: userIds } } })
+    ])
 
     res.json({ message: `${ids.length} student(s) deleted` })
   } catch (error) {
@@ -325,14 +331,15 @@ const addStudent = async (req, res) => {
 // Bulk add students
 const bulkAddStudents = async (req, res) => {
   const { students } = req.body
-
   const results = { success: [], failed: [] }
 
   for (const st of students) {
     try {
+      // Auto-generate LASU email pattern
+      const email = `${st.firstName.toLowerCase()}.${st.lastName.toLowerCase()}${st.matricNumber}@st.lasu.edu.ng`
+
       const rawPassword = `LASU${st.matricNumber}${st.lastName.toUpperCase()}`
       const hashedPassword = await bcrypt.hash(rawPassword, 10)
-      const email = st.email || `daniel.arinze220591085+${st.matricNumber}@st.lasu.edu.ng`
 
       const user = await prisma.user.create({
         data: { email, password: hashedPassword, role: 'STUDENT' }
@@ -349,26 +356,24 @@ const bulkAddStudents = async (req, res) => {
         }
       })
 
-      results.success.push(st.matricNumber)
-
-      // Auto-notify if a timetable already exists
+      // Auto-notify if timetable exists
       try {
         const timetableExists = await prisma.timetable.findFirst()
         if (timetableExists) {
-            await sendTimetableGeneratedEmail({
+          await sendTimetableGeneratedEmail({
             to: email,
             name: `${st.firstName} ${st.lastName}`
-            })
+          })
         }
-        } catch (emailError) {
+      } catch (emailError) {
         console.error('Auto-notify failed for', st.matricNumber, emailError.message)
-        }
+      }
 
+      results.success.push(st.matricNumber)
     } catch (error) {
       results.failed.push({
         matricNumber: st.matricNumber,
-        reason: error.code === 'P2002'
-          ? 'Already exists' : error.message
+        reason: error.code === 'P2002' ? 'Already exists' : error.message
       })
     }
   }
@@ -378,7 +383,6 @@ const bulkAddStudents = async (req, res) => {
     results
   })
 }
-
 
 // Add single lecturer
 const addLecturer = async (req, res) => {

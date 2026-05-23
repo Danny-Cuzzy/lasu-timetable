@@ -185,4 +185,53 @@ const signup = async (req, res) => {
   }
 }
 
-module.exports = { register, login, resetPassword, signup }
+const lecturerSignup = async (req, res) => {
+  const { staffId, email, password } = req.body
+
+  try {
+    // Find lecturer by staff ID
+    const lecturer = await prisma.lecturer.findUnique({
+      where: { staffId },
+      include: { user: true }
+    })
+
+    if (!lecturer) {
+      return res.status(400).json({
+        message: 'Staff ID not found. Contact your administrator.'
+      })
+    }
+
+    // Check email matches what admin stored
+    if (lecturer.user.email.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({
+        message: 'Email address does not match our records for this Staff ID.'
+      })
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: 'Password must be at least 6 characters.'
+      })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    await prisma.user.update({
+      where: { id: lecturer.userId },
+      data: { password: hashedPassword }
+    })
+
+    const token = generateToken(lecturer.user)
+    res.json({
+      message: 'Sign up successful',
+      token,
+      role: lecturer.user.role,
+      userId: lecturer.user.id
+    })
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
+
+module.exports = { register, login, resetPassword, signup, lecturerSignup }
