@@ -15,6 +15,7 @@ function Login() {
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
@@ -48,6 +49,17 @@ function Login() {
     setLoading(true)
     setError('')
     setSuccess('')
+    
+    if (newPassword !== confirmNewPassword) {
+        setError('Passwords do not match')
+        setLoading(false)
+        return
+    }
+    if (newPassword.length < 6) {
+        setError('Password must be at least 6 characters')
+        setLoading(false)
+    return
+    }
 
     try {
         const res = await axios.post(`${API}/auth/reset-password`, {
@@ -239,41 +251,55 @@ function Login() {
         {mode === 'reset' && (
         <form onSubmit={handleResetPassword} className="space-y-5">
             <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-                {getResetIdentifierLabel()}
-            </label>
-            <input
-                type="text"
-                value={resetIdentifier}
-                onChange={e => setResetIdentifier(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5
-                text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                focus:border-transparent"
-            />
-            {getResetIdentifierHint() && (
-                <p className="text-xs text-gray-400 mt-1">
-                {getResetIdentifierHint()}
-                </p>
-            )}
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {getResetIdentifierLabel()}
+                </label>
+                <input
+                    type="text"
+                    value={resetIdentifier}
+                    onChange={e => setResetIdentifier(e.target.value)}
+                    required
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                    text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                    focus:border-transparent"
+                />
+                {getResetIdentifierHint() && (
+                    <p className="text-xs text-gray-400 mt-1">
+                    {getResetIdentifierHint()}
+                    </p>
+                )}
             </div>
 
             <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-                New Password
-            </label>
-            <input
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                required
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5
-                text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                focus:border-transparent"
-            />
-            <p className="text-xs text-gray-400 mt-1">
-                Choose any password you would like to use
-            </p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password
+                </label>
+                <input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    required
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                    text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                    focus:border-transparent"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                    Choose any password you would like to use
+                </p>
+            </div>
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm New Password
+                </label>
+                <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={e => setConfirmNewPassword(e.target.value)}
+                    required
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5
+                    text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                    focus:border-transparent"
+                />
             </div>
 
             <button
@@ -296,6 +322,7 @@ function Login() {
                 setSuccess('')
                 setResetIdentifier('')
                 setNewPassword('')
+                setConfirmNewPassword('')
                 }}
                 className="text-blue-600 hover:underline font-medium"
             >
